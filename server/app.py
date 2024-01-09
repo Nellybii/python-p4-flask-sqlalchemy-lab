@@ -19,15 +19,66 @@ def home():
 
 @app.route('/animal/<int:id>')
 def animal_by_id(id):
-    return ''
+    animal = Animal.query.filter(Animal.id == id).first()
+
+    if not animal:
+        response_body = '<h1>404 animal not found</h1>'
+        response = make_response(response_body, 404)
+        return response
+    
+    zookeeper_names = [zookeeper.name for zookeeper in animal.zookeeper]
+    enclosure_environments = [enclosure.environment for enclosure in animal.enclosure]
+
+    response_body = f'''
+        <ul>ID:{animal.id}</ul>
+        <ul>Name:{animal.name}</ul>
+        <ul>Species:{animal.species}</ul>
+        <ul>Zookeepers: {', '.join(zookeeper_names)}</ul>
+        <ul>Enclosures: {', '.join(enclosure_environments)}</ul>
+    '''
+    response = make_response(response_body, 200)
+
+    return response
 
 @app.route('/zookeeper/<int:id>')
 def zookeeper_by_id(id):
-    return ''
+    zookeeper = Zookeeper.query.filter(Zookeeper.id == id).first()
+
+    if not zookeeper:
+        response_body = '<h1>404 zookeeper not found</h1>'
+        response = make_response(response_body, 404)
+        return response
+
+    response_body = f'''
+        <ul>ID:{zookeeper.id}</ul>
+        <ul>Name:{zookeeper.name}</ul>
+        <ul>Birthday:{zookeeper.birthday}</ul>
+        <ul>Animal:{zookeeper.animal.name}</ul>
+    
+    '''
+    response = make_response(response_body, 200)
+
+    return response
 
 @app.route('/enclosure/<int:id>')
 def enclosure_by_id(id):
-    return ''
+    enclosure = Enclosure.query.filter(Enclosure.id == id).first()
+
+    if not enclosure:
+        response_body = '<h1>404 enclosure not found</h1>'
+        response = make_response(response_body, 404)
+        return response
+
+    response_body = f'''
+        <ul>ID:{enclosure.id}</ul>
+        <ul>Environment:{enclosure.environment}</ul>
+        <ul>Open to Visitors:{enclosure.open_to_visitors}</ul>
+        <ul>Animal:{enclosure.animal.name}</ul>
+    
+    '''
+    response = make_response(response_body, 200)
+
+    return response
 
 
 if __name__ == '__main__':
